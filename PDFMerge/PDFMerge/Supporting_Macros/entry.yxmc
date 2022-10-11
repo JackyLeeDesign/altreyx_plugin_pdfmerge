@@ -113,7 +113,7 @@ except Exception as e:
     Alteryx.write(pdf_list,1)
 
 </productionModeScript>
-          <Port>54553</Port>
+          <Port>53491</Port>
           <JupyterGuidDir>7640bca0-2c13-4d2c-8f32-4b068e3c7c0c</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>

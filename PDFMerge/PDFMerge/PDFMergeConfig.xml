@@ -15,7 +15,7 @@
     <MetaInfo>
       <Name>PDF合併</Name>
       <Description>將指定資料夾內多個PDF檔案合併為單一PDF檔。</Description>
-      <CategoryName>PwC DEV Tools Test</CategoryName>
+      <CategoryName>PwC Data Tools</CategoryName>
       <SearchTags>pwc</SearchTags>
       <ToolVersion>1.0.0</ToolVersion>
       <Author>​Assurance Innovation and Transformation</Author>
