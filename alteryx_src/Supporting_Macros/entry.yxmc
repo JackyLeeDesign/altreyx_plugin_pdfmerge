@@ -14,41 +14,9 @@
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="3">
-      <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
-        <Position x="162" y="234" />
-      </GuiSettings>
-      <Properties>
-        <Configuration>
-          <NumRows value="1" />
-          <Fields>
-            <Field name="input_dir" />
-            <Field name="status" />
-          </Fields>
-          <Data>
-            <r>
-              <c>C:\Users\JYKL\Desktop\pdsmergeTest</c>
-              <c />
-            </r>
-          </Data>
-        </Configuration>
-        <Annotation DisplayMode="0">
-          <Name />
-          <DefaultAnnotationText />
-          <Left value="False" />
-        </Annotation>
-        <MetaInfo connection="Output">
-          <RecordInfo>
-            <Field name="input_dir" size="34" source="TextInput:" type="String" />
-            <Field name="status" source="TextInput:" type="Bool" />
-          </RecordInfo>
-        </MetaInfo>
-      </Properties>
-      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxTextInput" />
-    </Node>
     <Node ToolID="7">
       <GuiSettings Plugin="AlteryxBasePluginsGui.MacroOutput.MacroOutput">
-        <Position x="378" y="246" />
+        <Position x="1878" y="474" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -65,12 +33,12 @@
     </Node>
     <Node ToolID="19">
       <GuiSettings Plugin="JupyterCode">
-        <Position x="270" y="234" />
+        <Position x="1782" y="498" />
       </GuiSettings>
       <Properties>
         <Configuration>
           <WorkflowName>c:\users\jykl\desktop\alteryx\altreyx_ait_components\altreyx_plugin_pdfmerge\alteryx_src\supporting_macros\entry.yxmc</WorkflowName>
-          <JupyterProduction>true</JupyterProduction>
+          <JupyterProduction>false</JupyterProduction>
           <vEnvName>jupytertool_venv</vEnvName>
           <DefaultVenv>1</DefaultVenv>
           <productionModeScript>#################################
@@ -86,57 +54,89 @@ from ayx import Alteryx
 import pandas as pd
 from PyPDF2 import PdfMerger
 import os
-pdf_dir = Alteryx.read("#1")
-
+data = Alteryx.read("#3")
+output_file = Alteryx.read("#2")
+file_list = data['file_list'].iloc[0].split(",")
+output_file = output_file['output_file'].iloc[0]
+resultTemplate = {
+    "FilePath": file_list
+}
+resultData = pd.DataFrame(resultTemplate)
+resultData["Status"] = "Success"
 try:
-    filedir = pdf_dir['input_dir'].iloc[0]
-
     # 獲取所有pdf檔案完整路徑
-    def getAllpdfFiles(filedir):
-        file_list = [os.path.join(root, filespath) \
-                    for root, dirs, files in os.walk(filedir) \
-                    for filespath in files \
-                    if str(filespath).endswith('pdf')
-                    ]
-        return file_list if file_list else []
+#     def getAllpdfFiles(filedir):
+#         file_list = [os.path.join(root, filespath) \
+#                     for root, dirs, files in os.walk(filedir) \
+#                     for filespath in files \
+#                     if str(filespath).endswith('pdf')
+#                     ]
+#         return file_list if file_list else []
 
     merger = PdfMerger()
-
-    pdf_file_list = getAllpdfFiles(filedir)
-    for pdf_file in pdf_file_list:
-        merger.append(open(pdf_file,"rb"))
+    
+    resultTemplate = {
+        "name": ["FilePath", "Status", "Message"],
+        "FilePath": file_list
+    }
+    resultData = pd.DataFrame(resultTemplate)
+#     pdf_file_list = getAllpdfFiles(filedir)
+    for i in range(len(file_list)):
+        isSuccess = True
+        errorMessage = ""
+        try:
+            merger.append(open(file_list[i],"rb"))
+        except Exception as e:
+            isSuccess = False
+            errorMessage =  str(e)
+        if (isSuccess == True):
+            resultData.at[i, "Status"] = "Success"
+            resultData.at[i, "Message"] = ""
+        else:
+            resultData.at[i, "Status"] = "Failure"
+            resultData.at[i, "Message"] = errorMessage
 
     # Write to an output PDF document
-    output = open(os.path.join(filedir,"merge_result.pdf"),"wb")
+    output = open(os.path.join(output_file,"merge_result.pdf"),"wb")
     merger.write(output)
-    result = os.path.join(filedir,"merge_result.pdf")
-    pdf_dir["status"] = "Success：" + result
+    result = os.path.join(output_file,"merge_result.pdf")
+#     data["status"] = "Success：" + result
     print("Success")
 except Exception as e:
-    pdf_dir["status"] = "Failure：" + str(e)
+#     data["status"] = "Failure：" + str(e)
     print("Failure：" + str(e))
-Alteryx.write(pdf_dir,1)
+Alteryx.write(resultData,1)
+
+
+#################################
+
 
 
 #################################
 </productionModeScript>
-          <Port>55245</Port>
+          <Port>52671</Port>
           <JupyterGuidDir>7640bca0-2c13-4d2c-8f32-4b068e3c7c0c</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
-          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{"scrolled":false},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","pdf_dir = Alteryx.read(\"#1\")\n","\n","try:\n","    filedir = pdf_dir['input_dir'].iloc[0]\n","\n","    # 獲取所有pdf檔案完整路徑\n","    def getAllpdfFiles(filedir):\n","        file_list = [os.path.join(root, filespath) \\\n","                    for root, dirs, files in os.walk(filedir) \\\n","                    for filespath in files \\\n","                    if str(filespath).endswith('pdf')\n","                    ]\n","        return file_list if file_list else []\n","\n","    merger = PdfMerger()\n","\n","    pdf_file_list = getAllpdfFiles(filedir)\n","    for pdf_file in pdf_file_list:\n","        merger.append(open(pdf_file,\"rb\"))\n","\n","    # Write to an output PDF document\n","    output = open(os.path.join(filedir,\"merge_result.pdf\"),\"wb\")\n","    merger.write(output)\n","    result = os.path.join(filedir,\"merge_result.pdf\")\n","    pdf_dir[\"status\"] = \"Success：\" + result\n","    print(\"Success\")\n","except Exception as e:\n","    pdf_dir[\"status\"] = \"Failure：\" + str(e)\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(pdf_dir,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{"scrolled":false},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","data = Alteryx.read(\"#3\")\n","output_file = Alteryx.read(\"#2\")\n","file_list = data['file_list']\n","output_file = output_file['output_file'].iloc[0]\n","resultTemplate = {\n","    \"FilePath\": file_list\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","resultData[\"Status\"] = \"Success\"\n","try:\n","    # 獲取所有pdf檔案完整路徑\n","#     def getAllpdfFiles(filedir):\n","#         file_list = [os.path.join(root, filespath) \\\n","#                     for root, dirs, files in os.walk(filedir) \\\n","#                     for filespath in files \\\n","#                     if str(filespath).endswith('pdf')\n","#                     ]\n","#         return file_list if file_list else []\n","\n","    merger = PdfMerger()\n","    \n","    resultTemplate = {\n","        \"name\": [\"FilePath\", \"Status\", \"Message\"],\n","        \"FilePath\": file_list\n","    }\n","    resultData = pd.DataFrame(resultTemplate)\n","#     pdf_file_list = getAllpdfFiles(filedir)\n","    for i in range(len(file_list)):\n","        isSuccess = True\n","        errorMessage = \"\"\n","        try:\n","            merger.append(open(file_list[i],\"rb\"))\n","        except Exception as e:\n","            isSuccess = False\n","            errorMessage =  str(e)\n","        if (isSuccess == True):\n","            resultData.at[i, \"Status\"] = \"Success\"\n","            resultData.at[i, \"Message\"] = \"\"\n","        else:\n","            resultData.at[i, \"Status\"] = \"Failure\"\n","            resultData.at[i, \"Message\"] = errorMessage\n","\n","    # Write to an output PDF document\n","    output = open(os.path.join(output_file,\"merge_result.pdf\"),\"wb\")\n","    merger.write(output)\n","    result = os.path.join(output_file,\"merge_result.pdf\")\n","#     data[\"status\"] = \"Success：\" + result\n","    print(\"Success\")\n","except Exception as e:\n","#     data[\"status\"] = \"Failure：\" + str(e)\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
           <DefaultAnnotationText />
           <Left value="False" />
         </Annotation>
+        <MetaInfo connection="Output1">
+          <RecordInfo>
+            <Field name="FilePath" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Status" size="1073741823" source="PythonTool:" type="V_WString" />
+          </RecordInfo>
+        </MetaInfo>
       </Properties>
       <EngineSettings EngineDll="AlteryxJupyterPluginEngine.dll" EngineDllEntryPoint="AlteryxJupyter" />
     </Node>
     <Node ToolID="20">
       <GuiSettings Plugin="AlteryxGuiToolkit.Error.Error">
-        <Position x="54" y="162" width="59" height="59" />
+        <Position x="1650" y="330" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -144,26 +144,59 @@ Alteryx.write(pdf_dir,1)
           <Name />
           <DefaultAnnotationText>[#1]&amp;&amp;[#2]&amp;&amp;([#3])
 必填欄位未輸入完整, 請輸入完後再執行</DefaultAnnotationText>
-          <Left value="False" />
+          <Left value="True" />
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="22">
+    <Node ToolID="26">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FolderBrowse.FolderBrowse">
-        <Position x="54" y="54" width="59" height="59" />
+        <Position x="1722" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
         <Annotation DisplayMode="0">
-          <Name>pdf_dir</Name>
-          <DefaultAnnotationText>pdf_dir</DefaultAnnotationText>
+          <Name>outputPath</Name>
+          <AnnotationText>output_path</AnnotationText>
+          <DefaultAnnotationText>outputPath</DefaultAnnotationText>
           <Left value="False" />
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="23">
+    <Node ToolID="30">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
+        <Position x="1734" y="402" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <NumRows value="2" />
+          <Fields>
+            <Field name="output_file" />
+          </Fields>
+          <Data>
+            <r>
+              <c>C:\Users\JYKL\Desktop</c>
+            </r>
+            <r>
+              <c />
+            </r>
+          </Data>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="output_file" size="21" source="TextInput:" type="String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxTextInput" />
+    </Node>
+    <Node ToolID="31">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="162" y="162" width="59" height="59" />
+        <Position x="1734" y="330" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -174,27 +207,353 @@ Alteryx.write(pdf_dir,1)
         </Annotation>
       </Properties>
     </Node>
+    <Node ToolID="32">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
+        <Position x="1254" y="498" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <NumRows value="8" />
+          <Fields>
+            <Field name="file_list" />
+          </Fields>
+          <Data>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+            </r>
+          </Data>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name>輸入資料(Input連結料整理後結果)</Name>
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="file_list" size="43" source="TextInput:" type="WString" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxTextInput" />
+    </Node>
+    <Node ToolID="38">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="78" y="402" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="39">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="246" y="402" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="42">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="426" y="402" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="43">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="606" y="402" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="44">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="798" y="390" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="45">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="978" y="390" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="47">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="1170" y="390" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="49">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="1350" y="390" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="50">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="66" y="306" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie1</Name>
+          <DefaultAnnotationText>pdfFlie1</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="51">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="234" y="306" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie2</Name>
+          <DefaultAnnotationText>pdfFlie2</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="52">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="414" y="306" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie3</Name>
+          <DefaultAnnotationText>pdfFlie3</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="53">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="594" y="306" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie4</Name>
+          <DefaultAnnotationText>pdfFlie4</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="54">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="786" y="294" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie5</Name>
+          <DefaultAnnotationText>pdfFlie5</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="55">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="966" y="294" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie6</Name>
+          <DefaultAnnotationText>pdfFlie6</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="56">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="1158" y="294" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie7</Name>
+          <DefaultAnnotationText>pdfFlie7</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="57">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
+        <Position x="1338" y="294" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name>pdfFlie8</Name>
+          <DefaultAnnotationText>pdfFlie8</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
   </Nodes>
   <Connections>
-    <Connection name="#1">
-      <Origin ToolID="3" Connection="Output" />
-      <Destination ToolID="19" Connection="Input" />
-    </Connection>
     <Connection>
       <Origin ToolID="19" Connection="Output1" />
       <Destination ToolID="7" Connection="Input" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="22" Connection="Question" />
-      <Destination ToolID="20" Connection="Question" />
+      <Origin ToolID="26" Connection="Question" />
+      <Destination ToolID="31" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="22" Connection="Question" />
-      <Destination ToolID="23" Connection="Question" />
+      <Origin ToolID="26" Connection="Question" />
+      <Destination ToolID="20" Connection="Question" />
     </Connection>
     <Connection name="#2">
-      <Origin ToolID="23" Connection="Action" />
-      <Destination ToolID="3" Connection="Action" />
+      <Origin ToolID="30" Connection="Output" />
+      <Destination ToolID="19" Connection="Input" />
+    </Connection>
+    <Connection name="#3">
+      <Origin ToolID="32" Connection="Output" />
+      <Destination ToolID="19" Connection="Input" />
+    </Connection>
+    <Connection name="#2">
+      <Origin ToolID="31" Connection="Action" />
+      <Destination ToolID="30" Connection="Action" />
+    </Connection>
+    <Connection name="#2">
+      <Origin ToolID="38" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#3">
+      <Origin ToolID="39" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#4">
+      <Origin ToolID="42" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#5">
+      <Origin ToolID="43" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#6">
+      <Origin ToolID="44" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#7">
+      <Origin ToolID="45" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="47" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#8">
+      <Origin ToolID="49" Connection="Action" />
+      <Destination ToolID="32" Connection="Action" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="50" Connection="Question" />
+      <Destination ToolID="38" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="51" Connection="Question" />
+      <Destination ToolID="39" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="52" Connection="Question" />
+      <Destination ToolID="42" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="53" Connection="Question" />
+      <Destination ToolID="43" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="54" Connection="Question" />
+      <Destination ToolID="44" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="55" Connection="Question" />
+      <Destination ToolID="45" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="56" Connection="Question" />
+      <Destination ToolID="47" Connection="Question" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="57" Connection="Question" />
+      <Destination ToolID="49" Connection="Question" />
     </Connection>
   </Connections>
   <Properties>
@@ -216,7 +575,55 @@ Alteryx.write(pdf_dir,1)
     <Constants>
       <Constant>
         <Namespace>Question</Namespace>
-        <Name>pdf_dir</Name>
+        <Name>outputPath</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie1</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie2</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie3</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie4</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie5</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie6</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie7</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>pdfFlie8</Name>
         <Value />
         <IsNumeric value="False" />
       </Constant>
@@ -250,21 +657,117 @@ Alteryx.write(pdf_dir,1)
           <True>
             <Action>
               <Type>Error</Type>
-              <Description>尚未選擇欲處理資料夾，請重新確認後再執行</Description>
+              <Description>尚未選擇輸出資料夾，請重新確認後再執行</Description>
               <ToolId value="20" />
               <Expression>[#1]==""</Expression>
             </Action>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="23" />
+              <ToolId value="31" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>3/Data/r[1]/c[1]</Destination>
+              <Destination>30/Data/r[1]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	1
 column	1</DynamicConfiguration>
               <DefaultConfiguration value="True" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="38" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[1]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	1
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="True" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="39" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[2]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	2
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="42" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[3]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	3
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="43" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[4]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	4
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="44" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[5]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	5
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="45" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[6]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	6
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="47" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[7]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	7
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
+            </Action>
+            <Action>
+              <Type>Dynamic</Type>
+              <Description />
+              <ToolId value="49" />
+              <Expression>{{INPUT}}</Expression>
+              <Destination>32/Data/r[7]/c[1]</Destination>
+              <Mapping>Update Cell</Mapping>
+              <Mode>Expression</Mode>
+              <DynamicConfiguration>row	7
+column	1</DynamicConfiguration>
+              <DefaultConfiguration value="False" />
             </Action>
           </True>
         </NoCondition>
@@ -284,9 +787,81 @@ column	1</DynamicConfiguration>
             </Question>
             <Question>
               <Type>FolderBrowse</Type>
-              <Description>待處理的PDF資料夾</Description>
-              <Name>pdf_dir</Name>
-              <ToolId value="22" />
+              <Description>結果檔案儲存資料夾</Description>
+              <Name>outputPath</Name>
+              <ToolId value="26" />
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位1</Description>
+              <Name>pdfFlie1</Name>
+              <ToolId value="50" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位2</Description>
+              <Name>pdfFlie2</Name>
+              <ToolId value="51" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位3</Description>
+              <Name>pdfFlie3</Name>
+              <ToolId value="52" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位4</Description>
+              <Name>pdfFlie4</Name>
+              <ToolId value="53" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位5</Description>
+              <Name>pdfFlie5</Name>
+              <ToolId value="54" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位6</Description>
+              <Name>pdfFlie6</Name>
+              <ToolId value="55" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位7</Description>
+              <Name>pdfFlie7</Name>
+              <ToolId value="56" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
+            </Question>
+            <Question>
+              <Type>FileBrowse</Type>
+              <Description>PDF合併檔案 順位8</Description>
+              <Name>pdfFlie8</Name>
+              <ToolId value="57" />
+              <SaveAs value="False" />
+              <Mode>FileSpec</Mode>
+              <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
             </Question>
           </Questions>
         </Question>

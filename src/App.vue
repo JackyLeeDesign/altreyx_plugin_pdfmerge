@@ -1,5 +1,4 @@
 <template>
-
   <div class="container-fluid">
     <!-- PwC logo -->
     <div class="row">
@@ -9,26 +8,34 @@
         </div>
       </div>
     </div>
-
+    <div>{{showData}}</div>
     <!-- 主要內容 -->
     <div class="row">
       <div class="col">
         <!-- 第一步 -->
         <div class="card" style="margin-top:10px;">
-          <div class="card-header d-flex justify-content-between align-items-center"><b>請選擇欲合併的PDF檔所在資料夾：</b></div>
+          <div class="card-header d-flex justify-content-between align-items-center"><b>請連結欲合併的PDF檔資料：</b></div>
           <div class="card-body" style="overflow-x:auto;">
-            <label for="exampleFormControlInput1" class="form-label"><b>
-                <BIconFiles style="vertical-align:text-top;" class="icon" />本元件將指定資料夾內所有PDF檔進行合併。
-              </b></label>
-            <ayx data-ui-props='{type:"FileBrowse", widgetId:"pdf_dir", browseType:"Folder"}'></ayx>
+            <div class="mb-3">
+              <b v-if="legder_status === true" style="color:green;"><BIconCheckLg style="vertical-align:text-top;" class="icon" /> 已連接完成</b>
+              <b v-if="legder_status !== true" style="color:red;"><BIconExclamationTriangleFill style="vertical-align:text-top;" class="icon" /> {{legder_status}}</b>
+            </div>
           </div>
         </div>
 
         <!-- 第二步 -->
-        <!-- <div class="card" style="margin-top:10px;">
-          <div class="card-header d-flex justify-content-between align-items-center"><b>Step3：請選擇待處理頁數</b></div>
+        <div class="card" style="margin-top:10px;">
+          <div class="card-header d-flex justify-content-between align-items-center"><b>Step3：請選擇排序順序</b></div>
           <div class="card-body" style="overflow-x:auto;">
-            <div class="form-check mb-3">
+            <draggable :list="fileList" :disabled="!enabledSortList" item-key="name" class="list-group"
+              ghost-class="ghost" :move="checkMove" @start="dragging = true" @end="dragging = false">
+              <template #item="{ element }">
+                <div class="list-group-item" :class="{ 'not-draggable': !enabled }" :style="{'cursor': 'move'}">
+                  {{ element.name }}
+                </div>
+              </template>
+            </draggable>
+            <!-- <div class="form-check mb-3">
               <input type="checkbox" class="form-check-input" v-model="pdf_isToDoAll" />
               <label for="exampleFormControlInput1" class="form-check-label"><b>
                   處理所有頁數
@@ -42,9 +49,21 @@
                 </b></label>
               <input type="text" id="exampleFormControlInput1" class="form-control" placeholder="輸入頁數"
                 v-model="pdf_page">
-            </div>
+            </div> -->
+          </div>
+        </div>
+
+        <!-- 第三步 -->
+        <!-- <div class="card" style="margin-top:10px;">
+          <div class="card-header d-flex justify-content-between align-items-center"><b>請連結欲合併的PDF檔資料：</b></div>
+          <div class="card-body" style="overflow-x:auto;">
+            <label for="exampleFormControlInput1" class="form-label"><b>
+                <BIconFiles style="vertical-align:text-top;" class="icon" />本元件將指定PDF檔進行合併。
+              </b></label>
+              <ayx data-ui-props='{type:"FileBrowse", widgetId:"outputPath", browseType:"Folder"}'></ayx>
           </div>
         </div> -->
+        
 
       </div>
     </div>
@@ -56,8 +75,9 @@
 
 </template>
 <script>
-
+import draggable from "vuedraggable";
 //replaceAll Polyfill
+
 
 /**
  * String.prototype.replaceAll() polyfill
@@ -89,9 +109,21 @@ export default {
   name: 'files',
   data() {
     return {
+      str_columns:[],
+      val_columns:[],
+      enabledSortList: true,
+      fileList: [
+        { name: "File1", path: "./test/File1", id: 0 },
+        { name: "File2", path: "./test/File2", id: 1 },
+        { name: "File3", path: "./test/File3", id: 2 }
+      ],
+      dragging: false,
+      pdf_dir: "",
+      showData:""
     }
   },
   components: {
+    draggable
   },
   watch: {
   },
@@ -106,26 +138,61 @@ export default {
       script.onload = function () {
         //Define DataItem
         window.Alteryx.Gui.BeforeLoad = function (manager, AlteryxDataItems) {
-          var pdf_dir = new AlteryxDataItems.SimpleString('pdf_dir')
-          manager.addDataItem(pdf_dir)
+          var outputPath = new AlteryxDataItems.SimpleString('outputPath')
+          manager.addDataItem(outputPath)
           // Bind to Checkbox widget
-          manager.bindDataItemToWidget(pdf_dir, 'pdf_dir')
+          manager.bindDataItemToWidget(outputPath, 'outputPath')
         }
-
         //Load Settings
-        // window.Alteryx.Gui.AfterLoad = function (manager) {
-        //   this.rotate_angle = manager.getDataItem("rotate_angle").getValue()
-        //   this.pdf_page = manager.getDataItem("pdf_page").getValue()
-        //   this.pdf_dir = manager.getDataItem("pdf_dir").getValue()
-        // }.bind(this)
+        window.Alteryx.Gui.AfterLoad = function (manager) {
+          // this.pdf_dir = manager.getDataItem("pdf_dir").getValue()
+
+          //Load Income Field
+          let str_type = ["String","WString","V_String","V_WString","Date","Time","DateTime"]
+          let val_type = ["Byte","Int16","Int32","Int64","FixedDecimal","Float","Double"]
+          let incomingFields = manager.getIncomingFields()
+          // alert(incomingFields)
+          window.console.log(incomingFields)
+          this.showData = incomingFields;
+          this.str_columns = incomingFields.filter(item => str_type.indexOf(item.strType) > -1).map(item => item.strName)
+          this.val_columns = incomingFields.filter(item => val_type.indexOf(item.strType) > -1).map(item => item.strName)
+        }.bind(this)
       }.bind(this)
       //Load Script
       document.head.appendChild(script)
     }
   },
   computed: {
+    legder_status:function(){
+      try{
+        //是否連接資料
+        if ((this.str_columns.length + this.val_columns.length) === 0){
+          throw `未連接明細帳資料`
+        }
+        // //確定 str_columns 至少有 3 項
+        // if (this.str_columns.length < 3){
+        //   throw `僅有 ${this.str_columns.length} 個欄位屬於字串類型，您至少需要日期、傳票編號、科目代碼 3 個欄位。`
+        // }
+        // //一欄式 - 確定 val_columns 至少有 1 項
+        // if (this.ledger_type === true){
+        //   if (this.val_columns.length < 1){
+        //     throw `僅有 ${this.val_columns.length} 個欄位屬於數值類型，一欄式明細帳您至少需要 1 個數值欄位。`
+        //   }
+        // }
+        // //二欄式 - 確定 val_columns 至少有 1 項
+        // else{
+        //   if (this.val_columns.length < 2){
+        //     throw `僅有 ${this.val_columns.length} 個欄位屬於數值類型，二欄式明細帳您至少需要借方與貸方兩個欄位。`
+        //   }
+        // }
+        return true
+      }catch(err){
+        return err
+      }
+    },
   },
   methods: {
+    checkMove: function (e) { window.console.log("Future index: " + e.draggedContext.futureIndex) }
   }
 }
 </script>
