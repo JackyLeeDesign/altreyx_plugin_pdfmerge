@@ -38,7 +38,7 @@
       <Properties>
         <Configuration>
           <WorkflowName>c:\users\jykl\desktop\alteryx\altreyx_ait_components\altreyx_plugin_pdfmerge\alteryx_src\supporting_macros\entry.yxmc</WorkflowName>
-          <JupyterProduction>true</JupyterProduction>
+          <JupyterProduction>false</JupyterProduction>
           <vEnvName>jupytertool_venv</vEnvName>
           <DefaultVenv>1</DefaultVenv>
           <productionModeScript>#################################
@@ -62,7 +62,6 @@ resultTemplate = {
     "FilePath": file_list
 }
 resultData = pd.DataFrame(resultTemplate)
-resultData["Status"] = "Success"
 try:
     # 獲取所有pdf檔案完整路徑
 #     def getAllpdfFiles(filedir):
@@ -76,7 +75,6 @@ try:
     merger = PdfMerger()
     
     resultTemplate = {
-        "name": ["FilePath", "Status", "Message"],
         "FilePath": file_list
     }
     resultData = pd.DataFrame(resultTemplate)
@@ -84,11 +82,18 @@ try:
     for i in range(len(file_list)):
         errorMessage = ""
         try:
+            if(not file_list[i]):
+                resultData.at[i, "FilePath"] = ""
+                resultData.at[i, "Status"] = ""
+                resultData.at[i, "Message"] = ""
+                continue
+            
             isExist = os.path.exists(file_list[i])
-            if(isExist== True):
-                merger.append(open(file_list[i],"rb"))
-            else:
+            if(isExist == False):
                 errorMessage = "該檔案不存在! " + file_list[i]
+            else:
+                merger.append(open(file_list[i],"rb"))
+                
         except Exception as e:
             errorMessage =  str(e)
             
@@ -108,6 +113,10 @@ try:
 except Exception as e:
 #     data["status"] = "Failure：" + str(e)
     print("Failure：" + str(e))
+    filename = exception_traceback.tb_frame.f_code.co_filename
+    line_number = exception_traceback.tb_lineno
+    print("File name: ", filename)
+    print("Line number: ", line_number)
 Alteryx.write(resultData,1)
 
 
@@ -121,7 +130,7 @@ Alteryx.write(resultData,1)
           <JupyterGuidDir>7640bca0-2c13-4d2c-8f32-4b068e3c7c0c</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
-          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":44,"metadata":{"scrolled":false},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","data = Alteryx.read(\"#3\")\n","output_file = Alteryx.read(\"#2\")\n","file_list = data['file_list']\n","output_file = output_file['output_file'].iloc[0]\n","resultTemplate = {\n","    \"FilePath\": file_list\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","resultData[\"Status\"] = \"Success\"\n","try:\n","    # 獲取所有pdf檔案完整路徑\n","#     def getAllpdfFiles(filedir):\n","#         file_list = [os.path.join(root, filespath) \\\n","#                     for root, dirs, files in os.walk(filedir) \\\n","#                     for filespath in files \\\n","#                     if str(filespath).endswith('pdf')\n","#                     ]\n","#         return file_list if file_list else []\n","\n","    merger = PdfMerger()\n","    \n","    resultTemplate = {\n","        \"name\": [\"FilePath\", \"Status\", \"Message\"],\n","        \"FilePath\": file_list\n","    }\n","    resultData = pd.DataFrame(resultTemplate)\n","#     pdf_file_list = getAllpdfFiles(filedir)\n","    for i in range(len(file_list)):\n","        errorMessage = \"\"\n","        try:\n","            isExist = os.path.exists(file_list[i])\n","            if(isExist== True):\n","                merger.append(open(file_list[i],\"rb\"))\n","            else:\n","                errorMessage = \"該檔案不存在! \" + file_list[i]\n","        except Exception as e:\n","            errorMessage =  str(e)\n","            \n","        if (not errorMessage):\n","            resultData.at[i, \"Status\"] = \"Success\"\n","            resultData.at[i, \"Message\"] = \"\"\n","        else:\n","            resultData.at[i, \"Status\"] = \"Failure\"\n","            resultData.at[i, \"Message\"] = errorMessage\n","\n","    # Write to an output PDF document\n","    output = open(os.path.join(output_file,\"merge_result.pdf\"),\"wb\")\n","    merger.write(output)\n","    result = os.path.join(output_file,\"merge_result.pdf\")\n","#     data[\"status\"] = \"Success：\" + result\n","    print(\"Success\")\n","except Exception as e:\n","#     data[\"status\"] = \"Failure：\" + str(e)\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":null,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":null,"metadata":{"scrolled":false},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","data = Alteryx.read(\"#3\")\n","output_file = Alteryx.read(\"#2\")\n","file_list = data['file_list']\n","output_file = output_file['output_file'].iloc[0]\n","resultTemplate = {\n","    \"FilePath\": file_list\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","try:\n","    # 獲取所有pdf檔案完整路徑\n","#     def getAllpdfFiles(filedir):\n","#         file_list = [os.path.join(root, filespath) \\\n","#                     for root, dirs, files in os.walk(filedir) \\\n","#                     for filespath in files \\\n","#                     if str(filespath).endswith('pdf')\n","#                     ]\n","#         return file_list if file_list else []\n","\n","    merger = PdfMerger()\n","    \n","    resultTemplate = {\n","        \"FilePath\": file_list\n","    }\n","    resultData = pd.DataFrame(resultTemplate)\n","#     pdf_file_list = getAllpdfFiles(filedir)\n","    for i in range(len(file_list)):\n","        errorMessage = \"\"\n","        try:\n","            if(not file_list[i]):\n","                continue\n","            \n","            isExist = os.path.exists(file_list[i])\n","            if(isExist == False):\n","                errorMessage = \"該檔案不存在! \" + file_list[i]\n","            else:\n","                merger.append(open(file_list[i],\"rb\"))\n","                \n","        except Exception as e:\n","            errorMessage =  str(e)\n","            \n","        if (not errorMessage):\n","            resultData.at[i, \"Status\"] = \"Success\"\n","            resultData.at[i, \"Message\"] = \"\"\n","        else:\n","            resultData.at[i, \"Status\"] = \"Failure\"\n","            resultData.at[i, \"Message\"] = errorMessage\n","\n","    # Write to an output PDF document\n","    output = open(os.path.join(output_file,\"merge_result.pdf\"),\"wb\")\n","    merger.write(output)\n","    result = os.path.join(output_file,\"merge_result.pdf\")\n","#     data[\"status\"] = \"Success：\" + result\n","    print(\"Success\")\n","except Exception as e:\n","#     data[\"status\"] = \"Failure：\" + str(e)\n","    print(\"Failure：\" + str(e))\n","    filename = exception_traceback.tb_frame.f_code.co_filename\n","    line_number = exception_traceback.tb_lineno\n","    print(\"File name: \", filename)\n","    print(\"Line number: \", line_number)\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
@@ -216,22 +225,22 @@ Alteryx.write(resultData,1)
           </Fields>
           <Data>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
               <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
             </r>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
               <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
@@ -805,10 +814,10 @@ column	1</DynamicConfiguration>
               <Description />
               <ToolId value="49" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[7]/c[1]</Destination>
+              <Destination>32/Data/r[8]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
-              <DynamicConfiguration>row	7
+              <DynamicConfiguration>row	8
 column	1</DynamicConfiguration>
               <DefaultConfiguration value="False" />
             </Action>

@@ -17,10 +17,10 @@
       <Description>將多個PDF檔案合併為單一PDF檔。</Description>
       <CategoryName>PwC Data Tools</CategoryName>
       <SearchTags>pwc</SearchTags>
-      <ToolVersion>0.0.5</ToolVersion>
+      <ToolVersion>0.0.6s</ToolVersion>
       <Author>​Assurance Innovation and Transformation</Author>
       <Company>PricewaterhouseCoopers Taiwan</Company>
-      <Copyright>PricewaterhouseCoopers Taiwan 2021</Copyright>
+      <Copyright>PricewaterhouseCoopers Taiwan 2022</Copyright>
     </MetaInfo>
   </Properties>
 
