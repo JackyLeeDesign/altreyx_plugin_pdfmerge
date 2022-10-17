@@ -16,7 +16,7 @@
     </Node>
     <Node ToolID="7">
       <GuiSettings Plugin="AlteryxBasePluginsGui.MacroOutput.MacroOutput">
-        <Position x="1866" y="282" />
+        <Position x="1878" y="474" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -33,12 +33,12 @@
     </Node>
     <Node ToolID="19">
       <GuiSettings Plugin="JupyterCode">
-        <Position x="1770" y="306" />
+        <Position x="1782" y="498" />
       </GuiSettings>
       <Properties>
         <Configuration>
-          <WorkflowName>c:\users\jykl\desktop\alteryx\altreyx_ait_components\altreyx_plugin_pdfmerge\pdfmerge\pdfmerge\supporting_macros\entry.yxmc</WorkflowName>
-          <JupyterProduction>true</JupyterProduction>
+          <WorkflowName>c:\users\jykl\desktop\alteryx\altreyx_ait_components\altreyx_plugin_pdfmerge\alteryx_src\supporting_macros\entry.yxmc</WorkflowName>
+          <JupyterProduction>false</JupyterProduction>
           <vEnvName>jupytertool_venv</vEnvName>
           <DefaultVenv>1</DefaultVenv>
           <productionModeScript>#################################
@@ -50,68 +50,73 @@ Package.installPackages(package=['pandas','PyPDF2'], install_type="install --use
 
 
 #################################
-# 載入模組
 from ayx import Alteryx
 import pandas as pd
 from PyPDF2 import PdfMerger
 import os
-merger = PdfMerger()
-
-# 讀取前端所選PDF檔案路徑
 data = Alteryx.read("#3")
+output_file = Alteryx.read("#2")
 file_list = data['file_list']
-# 建立pandas表格資料,最後輸出該表
+output_file = output_file['output_file'].iloc[0]
 resultTemplate = {
     "FilePath": file_list
 }
 resultData = pd.DataFrame(resultTemplate)
+try:
+    # 獲取所有pdf檔案完整路徑
+#     def getAllpdfFiles(filedir):
+#         file_list = [os.path.join(root, filespath) \
+#                     for root, dirs, files in os.walk(filedir) \
+#                     for filespath in files \
+#                     if str(filespath).endswith('pdf')
+#                     ]
+#         return file_list if file_list else []
 
-# 讀取欲儲存的結果檔案資料夾
-output_dir = Alteryx.read("#2")
-output_dir = output_dir['output_dir'].iloc[0]
-# 結果檔名判斷，若已存在則補序號
-output_path = os.path.join(output_dir,"merge_result.pdf")
-file = os.path.splitext(output_path)[0]
-ext = os.path.splitext(output_path)[1]   
-i = 2
-while os.path.exists(output_path):
-    output_path = f'{file}({i}){ext}'
-    i += 1
-
-# 主程式
-try:        
+    merger = PdfMerger()
+    
+    resultTemplate = {
+        "FilePath": file_list
+    }
+    resultData = pd.DataFrame(resultTemplate)
+#     pdf_file_list = getAllpdfFiles(filedir)
     for i in range(len(file_list)):
-#       未輸入的欄位則跳過
-        if(not file_list[i]):
-            resultData.at[i, "FilePath"] = ""
-            resultData.at[i, "Status"] = ""
-            resultData.at[i, "Message"] = ""
-            continue
-        
         errorMessage = ""
         try:
-#           檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息
+            if(not file_list[i]):
+                resultData.at[i, "FilePath"] = ""
+                resultData.at[i, "Status"] = ""
+                resultData.at[i, "Message"] = ""
+                continue
+            
             isExist = os.path.exists(file_list[i])
-            if(isExist == True):
-                merger.append(open(file_list[i],"rb"))
-            else:
+            if(isExist == False):
                 errorMessage = "該檔案不存在! " + file_list[i]
+            else:
+                merger.append(open(file_list[i],"rb"))
+                
         except Exception as e:
             errorMessage =  str(e)
             
         if (not errorMessage):
             resultData.at[i, "Status"] = "Success"
             resultData.at[i, "Message"] = ""
-            resultData.at[i, "Output Path"] = output_path
         else:
             resultData.at[i, "Status"] = "Failure"
             resultData.at[i, "Message"] = errorMessage
-            
+
     # Write to an output PDF document
-    merger.write(open(output_path, 'wb'))
+    output = open(os.path.join(output_file,"merge_result.pdf"),"wb")
+    merger.write(output)
+    result = os.path.join(output_file,"merge_result.pdf")
+#     data["status"] = "Success：" + result
     print("Success")
 except Exception as e:
+#     data["status"] = "Failure：" + str(e)
     print("Failure：" + str(e))
+    filename = exception_traceback.tb_frame.f_code.co_filename
+    line_number = exception_traceback.tb_lineno
+    print("File name: ", filename)
+    print("Line number: ", line_number)
 Alteryx.write(resultData,1)
 
 
@@ -121,11 +126,11 @@ Alteryx.write(resultData,1)
 
 #################################
 </productionModeScript>
-          <Port>56367</Port>
+          <Port>52671</Port>
           <JupyterGuidDir>7640bca0-2c13-4d2c-8f32-4b068e3c7c0c</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
-          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{"scrolled":false},"outputs":[],"source":["# 載入模組\n","from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","merger = PdfMerger()\n","\n","# 讀取前端所選PDF檔案路徑\n","data = Alteryx.read(\"#3\")\n","file_list = data['file_list']\n","# 建立pandas表格資料,最後輸出該表\n","resultTemplate = {\n","    \"FilePath\": file_list\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","\n","# 讀取欲儲存的結果檔案資料夾\n","output_dir = Alteryx.read(\"#2\")\n","output_dir = output_dir['output_dir'].iloc[0]\n","# 結果檔名判斷，若已存在則補序號\n","output_path = os.path.join(output_dir,\"merge_result.pdf\")\n","file = os.path.splitext(output_path)[0]\n","ext = os.path.splitext(output_path)[1]   \n","i = 2\n","while os.path.exists(output_path):\n","    output_path = f'{file}({i}){ext}'\n","    i += 1\n","\n","# 主程式\n","try:        \n","    for i in range(len(file_list)):\n","#       未輸入的欄位則跳過\n","        if(not file_list[i]):\n","            resultData.at[i, \"FilePath\"] = \"\"\n","            resultData.at[i, \"Status\"] = \"\"\n","            resultData.at[i, \"Message\"] = \"\"\n","            continue\n","        \n","        errorMessage = \"\"\n","        try:\n","#           檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息\n","            isExist = os.path.exists(file_list[i])\n","            if(isExist == True):\n","                merger.append(open(file_list[i],\"rb\"))\n","            else:\n","                errorMessage = \"該檔案不存在! \" + file_list[i]\n","        except Exception as e:\n","            errorMessage =  str(e)\n","            \n","        if (not errorMessage):\n","            resultData.at[i, \"Status\"] = \"Success\"\n","            resultData.at[i, \"Message\"] = \"\"\n","            resultData.at[i, \"Output Path\"] = output_path\n","        else:\n","            resultData.at[i, \"Status\"] = \"Failure\"\n","            resultData.at[i, \"Message\"] = errorMessage\n","            \n","    # Write to an output PDF document\n","    merger.write(open(output_path, 'wb'))\n","    print(\"Success\")\n","except Exception as e:\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":null,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":null,"metadata":{"scrolled":false},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","data = Alteryx.read(\"#3\")\n","output_file = Alteryx.read(\"#2\")\n","file_list = data['file_list']\n","output_file = output_file['output_file'].iloc[0]\n","resultTemplate = {\n","    \"FilePath\": file_list\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","try:\n","    # 獲取所有pdf檔案完整路徑\n","#     def getAllpdfFiles(filedir):\n","#         file_list = [os.path.join(root, filespath) \\\n","#                     for root, dirs, files in os.walk(filedir) \\\n","#                     for filespath in files \\\n","#                     if str(filespath).endswith('pdf')\n","#                     ]\n","#         return file_list if file_list else []\n","\n","    merger = PdfMerger()\n","    \n","    resultTemplate = {\n","        \"FilePath\": file_list\n","    }\n","    resultData = pd.DataFrame(resultTemplate)\n","#     pdf_file_list = getAllpdfFiles(filedir)\n","    for i in range(len(file_list)):\n","        errorMessage = \"\"\n","        try:\n","            if(not file_list[i]):\n","                continue\n","            \n","            isExist = os.path.exists(file_list[i])\n","            if(isExist == False):\n","                errorMessage = \"該檔案不存在! \" + file_list[i]\n","            else:\n","                merger.append(open(file_list[i],\"rb\"))\n","                \n","        except Exception as e:\n","            errorMessage =  str(e)\n","            \n","        if (not errorMessage):\n","            resultData.at[i, \"Status\"] = \"Success\"\n","            resultData.at[i, \"Message\"] = \"\"\n","        else:\n","            resultData.at[i, \"Status\"] = \"Failure\"\n","            resultData.at[i, \"Message\"] = errorMessage\n","\n","    # Write to an output PDF document\n","    output = open(os.path.join(output_file,\"merge_result.pdf\"),\"wb\")\n","    merger.write(output)\n","    result = os.path.join(output_file,\"merge_result.pdf\")\n","#     data[\"status\"] = \"Success：\" + result\n","    print(\"Success\")\n","except Exception as e:\n","#     data[\"status\"] = \"Failure：\" + str(e)\n","    print(\"Failure：\" + str(e))\n","    filename = exception_traceback.tb_frame.f_code.co_filename\n","    line_number = exception_traceback.tb_lineno\n","    print(\"File name: \", filename)\n","    print(\"Line number: \", line_number)\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
@@ -137,7 +142,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="20">
       <GuiSettings Plugin="AlteryxGuiToolkit.Error.Error">
-        <Position x="1638" y="138" width="59" height="59" />
+        <Position x="1650" y="330" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -151,7 +156,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="26">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FolderBrowse.FolderBrowse">
-        <Position x="1710" y="54" width="59" height="59" />
+        <Position x="1722" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -165,17 +170,20 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="30">
       <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
-        <Position x="1722" y="210" />
+        <Position x="1734" y="402" />
       </GuiSettings>
       <Properties>
         <Configuration>
-          <NumRows value="1" />
+          <NumRows value="2" />
           <Fields>
-            <Field name="output_dir" />
+            <Field name="output_file" />
           </Fields>
           <Data>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdsmergeTest</c>
+              <c>C:\Users\JYKL\Desktop</c>
+            </r>
+            <r>
+              <c />
             </r>
           </Data>
         </Configuration>
@@ -186,7 +194,7 @@ Alteryx.write(resultData,1)
         </Annotation>
         <MetaInfo connection="Output">
           <RecordInfo>
-            <Field name="output_dir" size="34" source="TextInput:" type="String" />
+            <Field name="output_file" size="21" source="TextInput:" type="String" />
           </RecordInfo>
         </MetaInfo>
       </Properties>
@@ -194,7 +202,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="31">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1722" y="138" width="59" height="59" />
+        <Position x="1734" y="330" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -207,7 +215,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="32">
       <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
-        <Position x="1242" y="306" />
+        <Position x="1254" y="498" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -229,13 +237,13 @@ Alteryx.write(resultData,1)
               <c />
             </r>
             <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
-            </r>
-            <r>
-              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
+              <c />
             </r>
             <r>
               <c />
+            </r>
+            <r>
+              <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
             </r>
             <r>
               <c>C:\Users\JYKL\Desktop\pdfwatermark\我是測試.pdf</c>
@@ -257,7 +265,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="38">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="66" y="210" width="59" height="59" />
+        <Position x="78" y="402" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -270,7 +278,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="39">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="234" y="210" width="59" height="59" />
+        <Position x="246" y="402" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -283,7 +291,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="42">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="414" y="210" width="59" height="59" />
+        <Position x="426" y="402" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -296,7 +304,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="43">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="594" y="210" width="59" height="59" />
+        <Position x="606" y="402" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -309,7 +317,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="44">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="786" y="198" width="59" height="59" />
+        <Position x="798" y="390" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -322,7 +330,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="45">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="966" y="198" width="59" height="59" />
+        <Position x="978" y="390" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -335,7 +343,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="47">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1158" y="198" width="59" height="59" />
+        <Position x="1170" y="390" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -348,7 +356,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="49">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1338" y="198" width="59" height="59" />
+        <Position x="1350" y="390" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -361,7 +369,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="50">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="54" y="114" width="59" height="59" />
+        <Position x="66" y="306" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -374,7 +382,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="51">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="222" y="114" width="59" height="59" />
+        <Position x="234" y="306" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -387,7 +395,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="52">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="402" y="114" width="59" height="59" />
+        <Position x="414" y="306" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -400,7 +408,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="53">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="582" y="114" width="59" height="59" />
+        <Position x="594" y="306" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -413,7 +421,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="54">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="774" y="102" width="59" height="59" />
+        <Position x="786" y="294" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -426,7 +434,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="55">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="954" y="102" width="59" height="59" />
+        <Position x="966" y="294" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -439,7 +447,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="56">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="1146" y="102" width="59" height="59" />
+        <Position x="1158" y="294" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -452,7 +460,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="57">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="1326" y="102" width="59" height="59" />
+        <Position x="1338" y="294" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -465,7 +473,7 @@ Alteryx.write(resultData,1)
     </Node>
     <Node ToolID="58">
       <GuiSettings Plugin="AlteryxGuiToolkit.Error.Error">
-        <Position x="906" y="438" width="59" height="59" />
+        <Position x="918" y="630" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -806,10 +814,10 @@ column	1</DynamicConfiguration>
               <Description />
               <ToolId value="49" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[7]/c[1]</Destination>
+              <Destination>32/Data/r[8]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
-              <DynamicConfiguration>row	7
+              <DynamicConfiguration>row	8
 column	1</DynamicConfiguration>
               <DefaultConfiguration value="False" />
             </Action>
