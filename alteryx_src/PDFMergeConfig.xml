@@ -3,9 +3,9 @@
   <EngineSettings EngineDllEntryPoint="PDFMerge\Supporting_Macros\entry.yxmc" EngineDll="Macro" SDKVersion="10.1" />
   
   <GuiSettings Help="" Html="index.html" Icon="icon.png" SDKVersion="10.1">
-    <InputConnections>
+    <!-- <InputConnections>
       <Connection Name="Input" AllowMultiple="False" Optional="False" Type="Connection" Label="I"/>
-    </InputConnections>
+    </InputConnections> -->
     <OutputConnections>
       <Connection Name="Output" AllowMultiple="False" Optional="False" Type="Connection" Label="O"/>
     </OutputConnections>
