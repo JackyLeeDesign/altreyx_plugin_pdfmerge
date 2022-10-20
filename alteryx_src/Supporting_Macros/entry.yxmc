@@ -6,7 +6,6 @@
         <Position x="0" y="0" width="59" height="59" />
       </GuiSettings>
       <Properties>
-        <Configuration />
         <Annotation DisplayMode="0">
           <Name />
           <DefaultAnnotationText />
@@ -14,9 +13,9 @@
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="7">
+    <Node ToolID="2">
       <GuiSettings Plugin="AlteryxBasePluginsGui.MacroOutput.MacroOutput">
-        <Position x="1866" y="282" />
+        <Position x="2118" y="318" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -24,16 +23,16 @@
           <Abbrev />
         </Configuration>
         <Annotation DisplayMode="1">
-          <Name>Output</Name>
+          <Name />
           <DefaultAnnotationText>Output</DefaultAnnotationText>
           <Left value="False" />
         </Annotation>
       </Properties>
       <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxMacroOutput" />
     </Node>
-    <Node ToolID="19">
+    <Node ToolID="3">
       <GuiSettings Plugin="JupyterCode">
-        <Position x="1770" y="306" />
+        <Position x="1938" y="342" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -112,23 +111,30 @@ Alteryx.write(resultData,1)
 
 #################################
 </productionModeScript>
-          <Port>56367</Port>
-          <JupyterGuidDir>7640bca0-2c13-4d2c-8f32-4b068e3c7c0c</JupyterGuidDir>
+          <Port>52487</Port>
+          <JupyterGuidDir>3670eb74-fbd4-4b78-85c9-9e794e9b11b9</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
-          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{"scrolled":false},"outputs":[],"source":["# 載入模組\n","from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger\n","import os\n","merger = PdfMerger()\n","\n","# 讀取前端所選PDF檔案路徑\n","data = Alteryx.read(\"#3\")\n","file_list = data['file_list']\n","# 建立pandas表格資料,最後輸出該表\n","resultTemplate = {\n","    \"Status\":[\"\"]\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","\n","# 讀取欲儲存的結果檔案資料夾\n","output_dir = Alteryx.read(\"#2\")\n","output_dir = output_dir['output_dir'].iloc[0]\n","# 結果檔名判斷，若已存在則補序號\n","output_path = os.path.join(output_dir,\"merge_result.pdf\")\n","file = os.path.splitext(output_path)[0]\n","ext = os.path.splitext(output_path)[1]   \n","i = 2\n","while os.path.exists(output_path):\n","    output_path = f'{file}({i}){ext}'\n","    i += 1\n","\n","# 主程式\n","try:        \n","    for i in range(len(file_list)):\n","#       未輸入的欄位則跳過\n","        if(not file_list[i]):\n","            continue\n","        \n","#       檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息\n","        isExist = os.path.exists(file_list[i])\n","        if(isExist == True):\n","            merger.append(open(file_list[i],\"rb\"))\n","        else:\n","            raise Exception(\"該檔案不存在! \" + file_list[i])\n","            \n","    # Write to an output PDF document\n","    merger.write(open(output_path, 'wb'))\n","    resultData.at[0, \"Status\"] = \"Success\"\n","    resultData.at[0, \"Message\"] = \"\"\n","    resultData.at[0, \"Output Path\"] = output_path\n","    print(\"Success\")\n","except Exception as e:\n","    resultData.at[0, \"Status\"] = \"Failure\"\n","    resultData.at[0, \"Message\"] = str(e)\n","    resultData.at[0, \"Output Path\"] = \"\"\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["# List all non-standard packages to be imported by your \n","# script here (only missing packages will be installed)\n","from ayx import Package\n","\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":9,"metadata":{},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfReader\n","from PyPDF2 import PdfWriter\n","import os\n","pdf_list = Alteryx.read(\"#1\")\n","\n","try:\n","    input_page = pdf_list['input_page'].iloc[0]\n","    input_rotate = pdf_list['input_rotate'].iloc[0]\n","    input_isTodoAll = pdf_list['input_isTodoAll'].iloc[0]\n","    input_isConnectFile = pdf_list['input_isConnectFile'].iloc[0]\n","    if (input_isConnectFile==True):\n","        input_path = pdf_list['connect_input_path']\n","    else:\n","        input_path = pdf_list['pwc_input_path']\n","    # 建立pandas表格資料,最後輸出該表\n","    resultTemplate = {\n","        \"File\":input_path\n","    }\n","    resultData = pd.DataFrame(resultTemplate)\n","    for file_num in range(len(input_path)):\n","        try:\n","            file = os.path.splitext(input_path[file_num])[0]\n","            ext = os.path.splitext(input_path[file_num])[1]   \n","            reader = PdfReader(input_path[file_num], 'rb')\n","            writer = PdfWriter()\n","\n","            arrangeInputData = str(input_page).replace(\" \",\"\").split(\",\")\n","            isTodoAll = input_isTodoAll\n","            rotate = input_rotate\n","            toDoPage=[]\n","\n","            if(isTodoAll):\n","                for pageNum in range(reader.numPages):\n","                    page = reader.getPage(pageNum)\n","                    page.rotateClockwise(rotate)\n","                    writer.addPage(page)\n","            else:\n","                # 分析待處理頁數，將1-3拆成1,2,3\n","                for index in range(len(arrangeInputData)):\n","                    if(len(str(arrangeInputData[index]))==0):\n","                        continue\n","                    if('-' in str(arrangeInputData[index])):\n","                        startAndEndPage = str(arrangeInputData[index]).split('-')\n","                        startPage = \"\"\n","                        endPage = \"\"\n","                        # 起始頁與結束頁未輸入時, 始頁自動更改為第一頁, 結束頁自動取pdf最後一頁\n","                        if(len(str(startAndEndPage[0]))==0):\n","                            startAndEndPage[0]=1\n","                        if(len(str(startAndEndPage[1]))==0):\n","                            startAndEndPage[1]=reader.numPages\n","\n","                        # 判斷起始頁和結束頁\n","                        if(int(startAndEndPage[0])<int(startAndEndPage[1])):\n","                            startPage = startAndEndPage[0]\n","                            endPage = startAndEndPage[1]\n","                        else:\n","                            startPage = startAndEndPage[1]\n","                            endPage = startAndEndPage[0]\n","                        \n","                        # 展開並寫入至待處理頁數\n","                        for addPageNum in range(int(startPage),int(endPage)+1):\n","                            # 頁數字串轉數字\n","                            toDoPage.append(int(addPageNum))\n","                    else:\n","                        toDoPage.append(int(arrangeInputData[index]))\n","                \n","                # 頁數字串轉數字\n","                for index in range(len(toDoPage)):\n","                    toDoPage[index] = int(toDoPage[index])\n","\n","                # 去除重複頁數\n","                toDoPage = list(set(toDoPage))\n","\n","\n","                # 獲取最大頁數\n","                maxPageNum = max(toDoPage)\n","\n","                # 判斷輸入頁數是否超過檔案頁數\n","                if(maxPageNum > reader.numPages):\n","                    raise Exception(\"您輸入的頁數已超過檔案最大頁數，請更改頁數範圍後再執行\")\n","\n","                # 處理指定頁數 \n","                for pageNum in range(reader.numPages):\n","                    page = reader.getPage(pageNum)\n","                    if((pageNum+1) in toDoPage):\n","                        page.rotateClockwise(rotate)\n","                    writer.addPage(page)\n","\n","            # pdfWriter.encrypt(password)\n","            output_path = f'{file}_rotated{ext}'\n","            i = 2\n","            while os.path.exists(output_path):\n","                output_path = f'{file}_rotated{i}{ext}'\n","                i += 1\n","\n","            pdfOut = open(output_path, 'wb')\n","            writer.write(pdfOut)\n","            pdfOut.close()\n","\n","            # 顯示成功與否\n","            resultData.at[file_num, \"Status\"] = \"Success\"\n","            resultData.at[file_num, \"Message\"] = \"\"\n","            resultData.at[file_num, \"Output Path\"] = output_path\n","            print(\"Success:\" + input_path[file_num])\n","        except Exception as e:\n","            # 顯示成功與否\n","            resultData.at[file_num, \"Status\"] = \"Failure\"\n","            resultData.at[file_num, \"Message\"] = str(e)\n","            resultData.at[file_num, \"Output Path\"] = \"\"\n","            print(\"Failure:\" + input_path[file_num])\n","except Exception as e:\n","    resultData[\"Status\"] = \"Failure\"\n","    resultData[\"Message\"] = str(e)\n","    resultData[\"Output Path\"] = \"\"\n","    print(\"Failure：\" + str(e))\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
           <DefaultAnnotationText />
           <Left value="False" />
         </Annotation>
+        <MetaInfo connection="Output1">
+          <RecordInfo>
+            <Field name="Status" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Message" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Output Path" size="1073741823" source="PythonTool:" type="V_WString" />
+          </RecordInfo>
+        </MetaInfo>
       </Properties>
       <EngineSettings EngineDll="AlteryxJupyterPluginEngine.dll" EngineDllEntryPoint="AlteryxJupyter" />
     </Node>
-    <Node ToolID="20">
+    <Node ToolID="4">
       <GuiSettings Plugin="AlteryxGuiToolkit.Error.Error">
-        <Position x="1638" y="138" width="59" height="59" />
+        <Position x="1806" y="174" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -140,9 +146,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="26">
+    <Node ToolID="5">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FolderBrowse.FolderBrowse">
-        <Position x="1710" y="54" width="59" height="59" />
+        <Position x="1878" y="90" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -154,9 +160,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="30">
+    <Node ToolID="6">
       <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
-        <Position x="1722" y="210" />
+        <Position x="1890" y="246" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -183,9 +189,9 @@ Alteryx.write(resultData,1)
       </Properties>
       <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxTextInput" />
     </Node>
-    <Node ToolID="31">
+    <Node ToolID="7">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1722" y="138" width="59" height="59" />
+        <Position x="1890" y="174" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -196,9 +202,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="32">
+    <Node ToolID="8">
       <GuiSettings Plugin="AlteryxBasePluginsGui.TextInput.TextInput">
-        <Position x="1242" y="306" />
+        <Position x="1410" y="342" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -234,7 +240,7 @@ Alteryx.write(resultData,1)
           </Data>
         </Configuration>
         <Annotation DisplayMode="0">
-          <Name>輸入資料(Input連結料整理後結果)</Name>
+          <Name />
           <DefaultAnnotationText />
           <Left value="False" />
         </Annotation>
@@ -246,9 +252,9 @@ Alteryx.write(resultData,1)
       </Properties>
       <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxTextInput" />
     </Node>
-    <Node ToolID="38">
+    <Node ToolID="9">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="66" y="210" width="59" height="59" />
+        <Position x="234" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -259,9 +265,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="39">
+    <Node ToolID="10">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="234" y="210" width="59" height="59" />
+        <Position x="402" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -272,9 +278,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="42">
+    <Node ToolID="11">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="414" y="210" width="59" height="59" />
+        <Position x="582" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -285,9 +291,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="43">
+    <Node ToolID="12">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="594" y="210" width="59" height="59" />
+        <Position x="762" y="246" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -298,9 +304,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="44">
+    <Node ToolID="13">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="786" y="198" width="59" height="59" />
+        <Position x="954" y="234" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -311,9 +317,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="45">
+    <Node ToolID="14">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="966" y="198" width="59" height="59" />
+        <Position x="1134" y="234" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -324,9 +330,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="47">
+    <Node ToolID="15">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1158" y="198" width="59" height="59" />
+        <Position x="1326" y="234" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -337,9 +343,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="49">
+    <Node ToolID="16">
       <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
-        <Position x="1338" y="198" width="59" height="59" />
+        <Position x="1506" y="234" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -350,9 +356,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="50">
+    <Node ToolID="17">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="54" y="114" width="59" height="59" />
+        <Position x="222" y="150" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -363,9 +369,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="51">
+    <Node ToolID="18">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="222" y="114" width="59" height="59" />
+        <Position x="390" y="150" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -376,9 +382,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="52">
+    <Node ToolID="19">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="402" y="114" width="59" height="59" />
+        <Position x="570" y="150" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -389,9 +395,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="53">
+    <Node ToolID="20">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="582" y="114" width="59" height="59" />
+        <Position x="750" y="150" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -402,9 +408,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="54">
+    <Node ToolID="21">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="774" y="102" width="59" height="59" />
+        <Position x="942" y="138" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -415,9 +421,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="55">
+    <Node ToolID="22">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="954" y="102" width="59" height="59" />
+        <Position x="1122" y="138" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -428,9 +434,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="56">
+    <Node ToolID="23">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="1146" y="102" width="59" height="59" />
+        <Position x="1314" y="138" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -441,9 +447,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="57">
+    <Node ToolID="24">
       <GuiSettings Plugin="AlteryxGuiToolkit.Questions.FileBrowse.FileBrowse">
-        <Position x="1326" y="102" width="59" height="59" />
+        <Position x="1494" y="138" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -454,9 +460,9 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
-    <Node ToolID="58">
+    <Node ToolID="25">
       <GuiSettings Plugin="AlteryxGuiToolkit.Error.Error">
-        <Position x="906" y="438" width="59" height="59" />
+        <Position x="1074" y="474" width="59" height="59" />
       </GuiSettings>
       <Properties>
         <Configuration />
@@ -468,127 +474,158 @@ Alteryx.write(resultData,1)
         </Annotation>
       </Properties>
     </Node>
+    <Node ToolID="27">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="2034" y="318" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="False" />
+          <CommaDecimal value="False" />
+          <SelectFields>
+            <SelectField field="*Unknown" selected="True" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="Status" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Message" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Output Path" size="1073741823" source="PythonTool:" type="V_WString" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
   </Nodes>
   <Connections>
     <Connection>
-      <Origin ToolID="19" Connection="Output1" />
-      <Destination ToolID="7" Connection="Input" />
+      <Origin ToolID="3" Connection="Output1" />
+      <Destination ToolID="27" Connection="Input" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="26" Connection="Question" />
-      <Destination ToolID="31" Connection="Question" />
+      <Origin ToolID="5" Connection="Question" />
+      <Destination ToolID="7" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="26" Connection="Question" />
-      <Destination ToolID="20" Connection="Question" />
+      <Origin ToolID="5" Connection="Question" />
+      <Destination ToolID="4" Connection="Question" />
     </Connection>
     <Connection name="#2">
-      <Origin ToolID="30" Connection="Output" />
-      <Destination ToolID="19" Connection="Input" />
+      <Origin ToolID="6" Connection="Output" />
+      <Destination ToolID="3" Connection="Input" />
     </Connection>
     <Connection name="#3">
-      <Origin ToolID="32" Connection="Output" />
-      <Destination ToolID="19" Connection="Input" />
+      <Origin ToolID="8" Connection="Output" />
+      <Destination ToolID="3" Connection="Input" />
     </Connection>
     <Connection name="#2">
-      <Origin ToolID="31" Connection="Action" />
-      <Destination ToolID="30" Connection="Action" />
+      <Origin ToolID="7" Connection="Action" />
+      <Destination ToolID="6" Connection="Action" />
     </Connection>
     <Connection name="#2">
-      <Origin ToolID="38" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="9" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#3">
-      <Origin ToolID="39" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="10" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#4">
-      <Origin ToolID="42" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="11" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#5">
-      <Origin ToolID="43" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="12" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#6">
-      <Origin ToolID="44" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="13" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#7">
-      <Origin ToolID="45" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="14" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="47" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="15" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#8">
-      <Origin ToolID="49" Connection="Action" />
-      <Destination ToolID="32" Connection="Action" />
+      <Origin ToolID="16" Connection="Action" />
+      <Destination ToolID="8" Connection="Action" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="50" Connection="Question" />
-      <Destination ToolID="38" Connection="Question" />
+      <Origin ToolID="17" Connection="Question" />
+      <Destination ToolID="9" Connection="Question" />
     </Connection>
     <Connection name="#1" Wireless="True">
-      <Origin ToolID="50" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="17" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#2" Wireless="True">
-      <Origin ToolID="51" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="18" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#3" Wireless="True">
-      <Origin ToolID="52" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="19" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#8" Wireless="True">
-      <Origin ToolID="53" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="20" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#4" Wireless="True">
-      <Origin ToolID="54" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="21" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#5" Wireless="True">
-      <Origin ToolID="55" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="22" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#6" Wireless="True">
-      <Origin ToolID="56" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="23" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#7" Wireless="True">
-      <Origin ToolID="57" Connection="Question" />
-      <Destination ToolID="58" Connection="Question" />
+      <Origin ToolID="24" Connection="Question" />
+      <Destination ToolID="25" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="51" Connection="Question" />
-      <Destination ToolID="39" Connection="Question" />
+      <Origin ToolID="18" Connection="Question" />
+      <Destination ToolID="10" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="52" Connection="Question" />
-      <Destination ToolID="42" Connection="Question" />
+      <Origin ToolID="19" Connection="Question" />
+      <Destination ToolID="11" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="53" Connection="Question" />
-      <Destination ToolID="43" Connection="Question" />
+      <Origin ToolID="20" Connection="Question" />
+      <Destination ToolID="12" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="54" Connection="Question" />
-      <Destination ToolID="44" Connection="Question" />
+      <Origin ToolID="21" Connection="Question" />
+      <Destination ToolID="13" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="55" Connection="Question" />
-      <Destination ToolID="45" Connection="Question" />
+      <Origin ToolID="22" Connection="Question" />
+      <Destination ToolID="14" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="56" Connection="Question" />
-      <Destination ToolID="47" Connection="Question" />
+      <Origin ToolID="23" Connection="Question" />
+      <Destination ToolID="15" Connection="Question" />
     </Connection>
     <Connection name="#1">
-      <Origin ToolID="57" Connection="Question" />
-      <Destination ToolID="49" Connection="Question" />
+      <Origin ToolID="24" Connection="Question" />
+      <Destination ToolID="16" Connection="Question" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="27" Connection="Output" />
+      <Destination ToolID="2" Connection="Input" />
     </Connection>
   </Connections>
   <Properties>
@@ -598,16 +635,22 @@ Alteryx.write(resultData,1)
     <Annotation on="True" includeToolName="False" />
     <ConvErrorLimit value="10" />
     <ConvErrorLimit_Stop value="False" />
-    <CancelOnError value="True" />
+    <CancelOnError value="False" />
     <DisableBrowse value="False" />
-    <EnablePerformanceProfiling value="True" />
+    <EnablePerformanceProfiling value="False" />
     <DisableAllOutput value="False" />
-    <ShowAllMacroMessages value="True" />
+    <ShowAllMacroMessages value="False" />
     <ShowConnectionStatusIsOn value="True" />
     <ShowConnectionStatusOnlyWhenRunning value="True" />
     <ZoomLevel value="0" />
     <LayoutType>Horizontal</LayoutType>
     <Constants>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>Macro Output (2)</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
       <Constant>
         <Namespace>Question</Namespace>
         <Name>outputPath</Name>
@@ -693,15 +736,15 @@ Alteryx.write(resultData,1)
             <Action>
               <Type>Error</Type>
               <Description>尚未選擇輸出資料夾，請重新確認後再執行</Description>
-              <ToolId value="20" />
+              <ToolId value="4" />
               <Expression>[#1]==""</Expression>
             </Action>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="31" />
+              <ToolId value="7" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>30/Data/r[1]/c[1]</Destination>
+              <Destination>6/Data/r[1]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	1
@@ -711,9 +754,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="38" />
+              <ToolId value="9" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[1]/c[1]</Destination>
+              <Destination>8/Data/r[1]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	1
@@ -723,9 +766,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="39" />
+              <ToolId value="10" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[2]/c[1]</Destination>
+              <Destination>8/Data/r[2]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	2
@@ -735,9 +778,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="42" />
+              <ToolId value="11" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[3]/c[1]</Destination>
+              <Destination>8/Data/r[3]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	3
@@ -747,9 +790,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="43" />
+              <ToolId value="12" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[4]/c[1]</Destination>
+              <Destination>8/Data/r[4]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	4
@@ -759,9 +802,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="44" />
+              <ToolId value="13" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[5]/c[1]</Destination>
+              <Destination>8/Data/r[5]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	5
@@ -771,9 +814,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="45" />
+              <ToolId value="14" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[6]/c[1]</Destination>
+              <Destination>8/Data/r[6]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	6
@@ -783,9 +826,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="47" />
+              <ToolId value="15" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[7]/c[1]</Destination>
+              <Destination>8/Data/r[7]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	7
@@ -795,9 +838,9 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Dynamic</Type>
               <Description />
-              <ToolId value="49" />
+              <ToolId value="16" />
               <Expression>{{INPUT}}</Expression>
-              <Destination>32/Data/r[8]/c[1]</Destination>
+              <Destination>8/Data/r[8]/c[1]</Destination>
               <Mapping>Update Cell</Mapping>
               <Mode>Expression</Mode>
               <DynamicConfiguration>row	8
@@ -807,7 +850,7 @@ column	1</DynamicConfiguration>
             <Action>
               <Type>Error</Type>
               <Description>尚未選擇PDF檔，請重新確認後再執行</Description>
-              <ToolId value="58" />
+              <ToolId value="25" />
               <Expression>[#1]=="" and
 [#2]=="" and
 [#3]=="" and
@@ -830,20 +873,20 @@ column	1</DynamicConfiguration>
             <Question>
               <Type>MacroOutput</Type>
               <Description />
-              <Name>Output</Name>
-              <ToolId value="7" />
+              <Name>Macro Output (2)</Name>
+              <ToolId value="2" />
             </Question>
             <Question>
               <Type>FolderBrowse</Type>
               <Description>結果檔案儲存資料夾</Description>
               <Name>outputPath</Name>
-              <ToolId value="26" />
+              <ToolId value="5" />
             </Question>
             <Question>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位1</Description>
               <Name>pdfFlie1</Name>
-              <ToolId value="50" />
+              <ToolId value="17" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -852,7 +895,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位2</Description>
               <Name>pdfFlie2</Name>
-              <ToolId value="51" />
+              <ToolId value="18" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -861,7 +904,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位3</Description>
               <Name>pdfFlie3</Name>
-              <ToolId value="52" />
+              <ToolId value="19" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -870,7 +913,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位4</Description>
               <Name>pdfFlie4</Name>
-              <ToolId value="53" />
+              <ToolId value="20" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -879,7 +922,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位5</Description>
               <Name>pdfFlie5</Name>
-              <ToolId value="54" />
+              <ToolId value="21" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -888,7 +931,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位6</Description>
               <Name>pdfFlie6</Name>
-              <ToolId value="55" />
+              <ToolId value="22" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -897,7 +940,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位7</Description>
               <Name>pdfFlie7</Name>
-              <ToolId value="56" />
+              <ToolId value="23" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -906,7 +949,7 @@ column	1</DynamicConfiguration>
               <Type>FileBrowse</Type>
               <Description>PDF合併檔案 順位8</Description>
               <Name>pdfFlie8</Name>
-              <ToolId value="57" />
+              <ToolId value="24" />
               <SaveAs value="False" />
               <Mode>FileSpec</Mode>
               <FileSpec>PDF Files (*.pdf)|*.pdf</FileSpec>
@@ -924,7 +967,7 @@ column	1</DynamicConfiguration>
       <Wiz_CustomGraphic value="False" />
       <Wiz_ShowOutput value="True" />
       <Wiz_OpenOutputTools>
-        <Tool ToolId="7" Selected="True" />
+        <Tool ToolId="2" Selected="True" />
       </Wiz_OpenOutputTools>
       <Wiz_OutputMessage />
       <Wiz_NoOutputFilesMessage />
