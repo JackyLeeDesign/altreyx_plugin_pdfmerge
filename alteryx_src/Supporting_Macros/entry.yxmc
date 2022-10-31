@@ -382,7 +382,10 @@
           <OrderChanged value="False" />
           <CommaDecimal value="False" />
           <SelectFields>
-            <SelectField field="*Unknown" selected="True" />
+            <SelectField field="Status" selected="True" />
+            <SelectField field="Message" selected="True" />
+            <SelectField field="Output Path" selected="True" />
+            <SelectField field="*Unknown" selected="False" />
           </SelectFields>
         </Configuration>
         <Annotation DisplayMode="0">
