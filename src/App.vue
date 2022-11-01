@@ -22,9 +22,9 @@
 
         <!-- 第二步 -->
         <div class="card" style="margin-top:10px;">
-          <div class="card-header d-flex justify-content-between align-items-center"><b>Step2：請依照合併順序，依序選擇欲合併之PDF檔案</b>
+          <div class="card-header d-flex justify-content-between align-items-center"><b>Step2：請依照合併順序，依序選擇欲合併之 PDF 檔案</b>
           </div>
-          <div class="card-header d-flex justify-content-between align-items-center">(一次最多合併8個檔案，若超過則重複執行該元件即可)</div>
+          <div class="card-header d-flex justify-content-between align-items-center">(一次最多合併 8 個檔案，若超過則重複執行該元件即可)</div>
           <div class="card-body" style="overflow-x:auto;">
             <ayx
               data-ui-props="{type:'FileBrowse', widgetId:'pdfFlie1', browseType:'File', fileTypeFilters: 'PDF Files (*.pdf)|*.pdf'}">
@@ -70,7 +70,7 @@
   </div>
 
   <footer class="footer mt-auto">
-    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.1</p>
+    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.3</p>
   </footer>
 
 </template>

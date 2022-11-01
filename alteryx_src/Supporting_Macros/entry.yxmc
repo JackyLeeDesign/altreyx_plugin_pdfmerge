@@ -486,11 +486,11 @@ Alteryx.write(resultData,1)
 
 #################################
 </productionModeScript>
-          <Port>62765</Port>
+          <Port>55047</Port>
           <JupyterGuidDir>42f26674-86f6-4bb7-87fb-861e93a741ba</JupyterGuidDir>
           <JupyterGuidCopy />
           <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
-          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["from ast import Delete\n","from ayx import Package\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger,PdfReader\n","import os\n","merger = PdfMerger(strict=False)\n","\n","# 建立pandas表格資料,最後輸出該表\n","resultTemplate = {\n","    \"Status\":[\"\"]\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","\n","try: \n","    # 讀取前端所選PDF檔案路徑\n","    data = Alteryx.read(\"#1\")\n","    file_list = data['file_list']\n","    # 讀取欲儲存的結果檔案資料夾\n","    output_dir = Alteryx.read(\"#2\")\n","    output_dir = output_dir['output_dir'].iloc[0]\n","    output_path=\"\"\n","    if(output_dir and os.path.isdir(output_dir)):\n","        # 結果檔名判斷，若已存在則補序號\n","        output_path = os.path.join(output_dir,\"merge_result.pdf\")\n","        file = os.path.splitext(output_path)[0]\n","        ext = os.path.splitext(output_path)[1]   \n","        i = 2\n","        while os.path.exists(output_path):\n","            output_path = f'{file}({i}){ext}'\n","            i += 1\n","    else:\n","        raise Exception(\"儲存目的資料夾路徑不存在，請確認後再重新執行 ! \")\n","\n","# 主程式       \n","    for i in range(len(file_list)):\n","#       未輸入的欄位則跳過\n","        if(not file_list[i]):\n","            continue\n","        \n","#       檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息\n","        isExist = os.path.exists(file_list[i])\n","        if(isExist == True):\n","            reader = PdfReader(open(file_list[i],\"rb\"))\n","            merger.append(reader)\n","        else:\n","            raise Exception(\"該檔案不存在! \" + file_list[i])\n","            \n","    # Write to an output PDF document\n","    merger.write(open(output_path, 'wb'))\n","    resultData.at[0, \"Status\"] = \"Success\"\n","    resultData.at[0, \"Message\"] = \"\"\n","    resultData.at[0, \"Output Path\"] = output_path\n","except Exception as e:\n","    resultData.at[0, \"Status\"] = \"Failure\"\n","    resultData.at[0, \"Message\"] = \"Alteryx解析PDF過程發生錯誤，請與AI&T 同仁聯繫(\"+str(e)+\")\"\n","    resultData.at[0, \"Output Path\"] = \"\"\n","    if(output_path and os.path.exists(output_path)):\n","        os.remove(output_path)\n","Alteryx.write(resultData,1)\n"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+          <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["from ast import Delete\n","from ayx import Package\n","Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")"]},{"cell_type":"code","execution_count":2,"metadata":{},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger,PdfReader\n","import os\n","merger = PdfMerger(strict=False)\n","\n","# 建立pandas表格資料,最後輸出該表\n","resultTemplate = {\n","    \"Status\":[\"\"]\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","\n","try: \n","    # 讀取前端所選PDF檔案路徑\n","    data = Alteryx.read(\"#1\")\n","    file_list = data['file_list']\n","    # 讀取欲儲存的結果檔案資料夾\n","    output_dir = Alteryx.read(\"#2\")\n","    output_dir = output_dir['output_dir'].iloc[0]\n","    output_path=\"\"\n","    if(output_dir and os.path.isdir(output_dir)):\n","        # 結果檔名判斷，若已存在則補序號\n","        output_path = os.path.join(output_dir,\"merge_result.pdf\")\n","        file = os.path.splitext(output_path)[0]\n","        ext = os.path.splitext(output_path)[1]   \n","        i = 2\n","        while os.path.exists(output_path):\n","            output_path = f'{file}({i}){ext}'\n","            i += 1\n","    else:\n","        raise Exception(\"儲存目的資料夾路徑不存在，請確認後再重新執行 ! \")\n","\n","# 主程式       \n","    for i in range(len(file_list)):\n","#       未輸入的欄位則跳過\n","        if(not file_list[i]):\n","            continue\n","        \n","#       檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息\n","        isExist = os.path.exists(file_list[i])\n","        if(isExist == True):\n","            reader = PdfReader(open(file_list[i],\"rb\"))\n","            merger.append(reader)\n","        else:\n","            raise Exception(\"該檔案不存在! \" + file_list[i])\n","            \n","    # Write to an output PDF document\n","    merger.write(open(output_path, 'wb'))\n","    resultData.at[0, \"Status\"] = \"Success\"\n","    resultData.at[0, \"Message\"] = \"\"\n","    resultData.at[0, \"Output Path\"] = output_path\n","except Exception as e:\n","    resultData.at[0, \"Status\"] = \"Failure\"\n","    resultData.at[0, \"Message\"] = \"Alteryx 解析 PDF 過程發生錯誤，請與 AI&T 同仁聯繫(\"+str(e)+\")\"\n","    resultData.at[0, \"Output Path\"] = \"\"\n","    if(output_path and os.path.exists(output_path)):\n","        os.remove(output_path)\n","Alteryx.write(resultData,1)"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
@@ -506,6 +506,34 @@ Alteryx.write(resultData,1)
         </MetaInfo>
       </Properties>
       <EngineSettings EngineDll="AlteryxJupyterPluginEngine.dll" EngineDllEntryPoint="AlteryxJupyter" />
+    </Node>
+    <Node ToolID="29">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Message.Message">
+        <Position x="1950" y="342" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <When>Filter</When>
+          <Filter>[Status]=="Failure"</Filter>
+          <Type>Message</Type>
+          <Priority>Normal</Priority>
+          <Transient>False</Transient>
+          <MessageExpression>[Message]</MessageExpression>
+        </Configuration>
+        <Annotation DisplayMode="1">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="Status" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Message" size="1073741823" source="PythonTool:" type="V_WString" />
+            <Field name="Output Path" size="1073741823" source="PythonTool:" type="V_WString" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxMessage" />
     </Node>
   </Nodes>
   <Connections>
@@ -630,6 +658,10 @@ Alteryx.write(resultData,1)
       <Destination ToolID="2" Connection="Input" />
     </Connection>
     <Connection>
+      <Origin ToolID="27" Connection="Output" />
+      <Destination ToolID="29" Connection="Input" />
+    </Connection>
+    <Connection>
       <Origin ToolID="28" Connection="Output1" />
       <Destination ToolID="27" Connection="Input" />
     </Connection>
@@ -645,7 +677,7 @@ Alteryx.write(resultData,1)
     <DisableBrowse value="False" />
     <EnablePerformanceProfiling value="False" />
     <DisableAllOutput value="False" />
-    <ShowAllMacroMessages value="False" />
+    <ShowAllMacroMessages value="True" />
     <ShowConnectionStatusIsOn value="True" />
     <ShowConnectionStatusOnlyWhenRunning value="True" />
     <ZoomLevel value="0" />
