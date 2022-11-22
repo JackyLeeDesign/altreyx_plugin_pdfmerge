@@ -70,7 +70,8 @@
   </div>
 
   <footer class="footer mt-auto">
-    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.3</p>
+    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.4</p>
+    <p class="text-muted" style="margin: 0px;text-align: center; font-size:10px;">Copyright © 2001-2022 Python Software Foundation; All Rights Reserved.</p>
   </footer>
 
 </template>

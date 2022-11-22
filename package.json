@@ -1,6 +1,6 @@
 {
-  "name": "alteryx_plugin_xlsx",
-  "version": "0.1.0",
+  "name": "alteryx_plugin_pdfmerge",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
