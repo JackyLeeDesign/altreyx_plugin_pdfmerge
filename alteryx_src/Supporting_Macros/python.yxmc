@@ -1,0 +1,430 @@
+<?xml version="1.0"?>
+<AlteryxDocument yxmdVer="2020.4">
+  <Nodes>
+    <Node ToolID="1">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.Tab.Tab">
+        <Position x="0" y="0" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="2">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.MacroInput.MacroInput">
+        <Position x="54" y="258" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <UseFileInput value="False" />
+          <Name>Input2</Name>
+          <Abbrev>A</Abbrev>
+          <ShowFieldMap value="True" />
+          <Optional value="False" />
+          <TextInput>
+            <Configuration>
+              <NumRows value="2" />
+              <Fields>
+                <Field name="file_list" />
+              </Fields>
+              <Data>
+                <r>
+                  <c>C:\Users\JYKL\Desktop\test file1.pdf</c>
+                </r>
+                <r>
+                  <c>C:\Users\JYKL\Desktop\test file2.pdf</c>
+                </r>
+              </Data>
+            </Configuration>
+          </TextInput>
+        </Configuration>
+        <Annotation DisplayMode="1">
+          <Name />
+          <DefaultAnnotationText>A Input</DefaultAnnotationText>
+          <Left value="True" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="file_list" size="36" source="TextInput:" type="String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxMacroInput" />
+    </Node>
+    <Node ToolID="3">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.MacroOutput.MacroOutput">
+        <Position x="330" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Name>Output4</Name>
+          <Abbrev />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>python output</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxMacroOutput" />
+    </Node>
+    <Node ToolID="4">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Questions.ControlParam.ControlParam">
+        <Position x="138" y="54" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>runpython</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="5">
+      <GuiSettings Plugin="AlteryxGuiToolkit.Action.Action">
+        <Position x="150" y="138" width="59" height="59" />
+      </GuiSettings>
+      <Properties>
+        <Configuration />
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Update Value</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="8">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.MacroInput.MacroInput">
+        <Position x="54" y="330" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <UseFileInput value="False" />
+          <Name>Input8</Name>
+          <Abbrev>B</Abbrev>
+          <ShowFieldMap value="True" />
+          <Optional value="False" />
+          <TextInput>
+            <Configuration>
+              <NumRows value="1" />
+              <Fields>
+                <Field name="output_dir" />
+              </Fields>
+              <Data>
+                <r>
+                  <c>C:\Users\JYKL\Desktop</c>
+                </r>
+              </Data>
+            </Configuration>
+          </TextInput>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>B Input</DefaultAnnotationText>
+          <Left value="True" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="output_dir" size="21" source="TextInput:" type="String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxMacroInput" />
+    </Node>
+    <Node ToolID="7">
+      <GuiSettings Plugin="AlteryxGuiToolkit.ToolContainer.ToolContainer">
+        <Position x="185" y="245" width="121" height="133" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Caption>Python</Caption>
+          <Style TextColor="#314c4a" FillColor="#ecf2f2" BorderColor="#314c4a" Transparency="25" Margin="25" />
+          <Disabled value="False" />
+          <Folded value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <ChildNodes>
+        <Node ToolID="6">
+          <GuiSettings Plugin="JupyterCode">
+            <Position x="210" y="294" />
+          </GuiSettings>
+          <Properties>
+            <Configuration>
+              <WorkflowName>c:\users\jykl\desktop\alteryx\altreyx_ait_components\altreyx_plugin_pdfmerge\alteryx_src\supporting_macros\python.yxmc</WorkflowName>
+              <JupyterProduction>false</JupyterProduction>
+              <vEnvName>jupytertool_venv</vEnvName>
+              <DefaultVenv>1</DefaultVenv>
+              <productionModeScript>#################################
+from ast import Delete
+from ayx import Package
+try:
+    Package.installPackages(package=['pandas','PyPDF2'], install_type="install --user")
+except:
+    pass
+
+
+#################################
+from ayx import Alteryx
+import pandas as pd
+from PyPDF2 import PdfMerger,PdfReader
+import os
+merger = PdfMerger(strict=False)
+
+# 建立pandas表格資料,最後輸出該表
+resultTemplate = {
+    "Status":[""],
+    "Message":"",
+    "Output Path":""
+}
+resultData = pd.DataFrame(resultTemplate)
+
+try: 
+    # 讀取前端所選PDF檔案路徑
+    data = Alteryx.read("#1")
+    file_list = data['file_list']
+    # 讀取欲儲存的結果檔案資料夾
+    output_dir = Alteryx.read("#2")
+    output_dir = output_dir['output_dir'].iloc[0]
+    output_path=""
+    if(output_dir and os.path.isdir(output_dir)):
+        # 結果檔名判斷，若已存在則補序號
+        output_path = os.path.join(output_dir,"merge_result.pdf")
+        file = os.path.splitext(output_path)[0]
+        ext = os.path.splitext(output_path)[1]   
+        i = 2
+        while os.path.exists(output_path):
+            output_path = f'{file}({i}){ext}'
+            i += 1
+    else:
+        raise Exception("儲存目的資料夾路徑不存在，請確認後再重新執行 ! ")
+
+# 主程式       
+    for i in range(len(file_list)):
+#       未輸入的欄位則跳過
+        if(not file_list[i]):
+            continue
+        
+#       檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息
+        isExist = os.path.exists(file_list[i])
+        if(isExist == True):
+            reader = PdfReader(open(file_list[i],"rb"))
+            merger.append(reader)
+        else:
+            raise Exception("該檔案不存在! " + file_list[i])
+            
+    # Write to an output PDF document
+    merger.write(open(output_path, 'wb'))
+    resultData.at[0, "Status"] = "Success"
+    resultData.at[0, "Message"] = "-"
+    resultData.at[0, "Output Path"] = output_path
+except Exception as e:
+    resultData.at[0, "Status"] = "Failure"
+    resultData.at[0, "Message"] = "Alteryx 解析 PDF 過程發生錯誤，請與 AI&amp;T 同仁聯繫("+str(e)+")"
+    resultData.at[0, "Output Path"] = "-"
+    if(output_path and os.path.exists(output_path)):
+        os.remove(output_path)
+Alteryx.write(resultData,1)
+# Copyright © 2001-2022 Python Software Foundation; All Rights Reserved.
+
+
+#################################
+</productionModeScript>
+              <Port>64190</Port>
+              <JupyterGuidDir>abb8e49b-2e41-4043-80ae-aeb6ca3dda9a</JupyterGuidDir>
+              <JupyterGuidCopy />
+              <LastExecutedByEngineVersion>2020.4.5.12471</LastExecutedByEngineVersion>
+              <Notebook><![CDATA[{"cells":[{"cell_type":"markdown","metadata":{"ayx":{"cell_class":"text_cell","cell_css":"border: 3px solid #357; margin: 4px; background: #fbffff","cell_type":"markdown","contents_keyword":"Alteryx.help()","first_line":"Run `Alteryx.help()` for info about useful functions.","label":"info"}},"source":["Run `Alteryx.help()` for info about useful functions.  \n","i.e., `Alteryx.read(\"#1\")`, `Alteryx.write(df,1)`, `Alteryx.getWorkflowConstant(\"Engine.WorkflowDirectory\")`"]},{"cell_type":"code","execution_count":1,"metadata":{"ayx":{"cell_class":"code_cell","cell_css":"border: 1px solid #58a; margin: 2px;","cell_type":"code","contents_keyword":"installPackages","first_line":"# List all non-standard packages to be imported by your","label":"deps"}},"outputs":[],"source":["from ast import Delete\n","from ayx import Package\n","try:\n","    Package.installPackages(package=['pandas','PyPDF2'], install_type=\"install --user\")\n","except:\n","    pass"]},{"cell_type":"code","execution_count":2,"metadata":{},"outputs":[],"source":["from ayx import Alteryx\n","import pandas as pd\n","from PyPDF2 import PdfMerger,PdfReader\n","import os\n","merger = PdfMerger(strict=False)\n","\n","# 建立pandas表格資料,最後輸出該表\n","resultTemplate = {\n","    \"Status\":[\"\"],\n","    \"Message\":\"\",\n","    \"Output Path\":\"\"\n","}\n","resultData = pd.DataFrame(resultTemplate)\n","\n","try: \n","    # 讀取前端所選PDF檔案路徑\n","    data = Alteryx.read(\"#1\")\n","    file_list = data['file_list']\n","    # 讀取欲儲存的結果檔案資料夾\n","    output_dir = Alteryx.read(\"#2\")\n","    output_dir = output_dir['output_dir'].iloc[0]\n","    output_path=\"\"\n","    if(output_dir and os.path.isdir(output_dir)):\n","        # 結果檔名判斷，若已存在則補序號\n","        output_path = os.path.join(output_dir,\"merge_result.pdf\")\n","        file = os.path.splitext(output_path)[0]\n","        ext = os.path.splitext(output_path)[1]   \n","        i = 2\n","        while os.path.exists(output_path):\n","            output_path = f'{file}({i}){ext}'\n","            i += 1\n","    else:\n","        raise Exception(\"儲存目的資料夾路徑不存在，請確認後再重新執行 ! \")\n","\n","# 主程式       \n","    for i in range(len(file_list)):\n","#       未輸入的欄位則跳過\n","        if(not file_list[i]):\n","            continue\n","        \n","#       檔案若存在則合併,反之則標示錯誤並顯示錯誤訊息\n","        isExist = os.path.exists(file_list[i])\n","        if(isExist == True):\n","            reader = PdfReader(open(file_list[i],\"rb\"))\n","            merger.append(reader)\n","        else:\n","            raise Exception(\"該檔案不存在! \" + file_list[i])\n","            \n","    # Write to an output PDF document\n","    merger.write(open(output_path, 'wb'))\n","    resultData.at[0, \"Status\"] = \"Success\"\n","    resultData.at[0, \"Message\"] = \"-\"\n","    resultData.at[0, \"Output Path\"] = output_path\n","except Exception as e:\n","    resultData.at[0, \"Status\"] = \"Failure\"\n","    resultData.at[0, \"Message\"] = \"Alteryx 解析 PDF 過程發生錯誤，請與 AI&T 同仁聯繫(\"+str(e)+\")\"\n","    resultData.at[0, \"Output Path\"] = \"-\"\n","    if(output_path and os.path.exists(output_path)):\n","        os.remove(output_path)\n","Alteryx.write(resultData,1)\n","# Copyright © 2001-2022 Python Software Foundation; All Rights Reserved."]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":[]}],"metadata":{"kernelspec":{"display_name":"jupytertool_venv","language":"python","name":"jupytertool_venv"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.8.5"}},"nbformat":4,"nbformat_minor":2}]]></Notebook>
+            </Configuration>
+            <Annotation DisplayMode="0">
+              <Name />
+              <DefaultAnnotationText />
+              <Left value="False" />
+            </Annotation>
+            <MetaInfo connection="Output1">
+              <RecordInfo>
+                <Field name="Status" size="1073741823" source="PythonTool:" type="V_WString" />
+                <Field name="Message" size="1073741823" source="PythonTool:" type="V_WString" />
+                <Field name="Output Path" size="1073741823" source="PythonTool:" type="V_WString" />
+              </RecordInfo>
+            </MetaInfo>
+          </Properties>
+          <EngineSettings EngineDll="AlteryxJupyterPluginEngine.dll" EngineDllEntryPoint="AlteryxJupyter" />
+        </Node>
+      </ChildNodes>
+    </Node>
+  </Nodes>
+  <Connections>
+    <Connection name="#1">
+      <Origin ToolID="2" Connection="Output" />
+      <Destination ToolID="6" Connection="Input" />
+    </Connection>
+    <Connection name="#2">
+      <Origin ToolID="8" Connection="Output" />
+      <Destination ToolID="6" Connection="Input" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="4" Connection="Question" />
+      <Destination ToolID="5" Connection="Question" />
+    </Connection>
+    <Connection name="#2">
+      <Origin ToolID="5" Connection="Action" />
+      <Destination ToolID="7" Connection="Action" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Output1" />
+      <Destination ToolID="3" Connection="Input" />
+    </Connection>
+  </Connections>
+  <Properties>
+    <Memory default="True" />
+    <GlobalRecordLimit value="0" />
+    <TempFiles default="True" />
+    <Annotation on="True" includeToolName="False" />
+    <ConvErrorLimit value="10" />
+    <ConvErrorLimit_Stop value="False" />
+    <CancelOnError value="False" />
+    <DisableBrowse value="False" />
+    <EnablePerformanceProfiling value="False" />
+    <DisableAllOutput value="False" />
+    <ShowAllMacroMessages value="False" />
+    <ShowConnectionStatusIsOn value="True" />
+    <ShowConnectionStatusOnlyWhenRunning value="True" />
+    <ZoomLevel value="0" />
+    <LayoutType>Horizontal</LayoutType>
+    <Constants>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>Macro Input (2)</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>Macro Output (3)</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>ControlParam.Control Parameter (4)</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+      <Constant>
+        <Namespace>Question</Namespace>
+        <Name>Macro Input (8)</Name>
+        <Value />
+        <IsNumeric value="False" />
+      </Constant>
+    </Constants>
+    <MetaInfo>
+      <NameIsFileName value="True" />
+      <Name>python</Name>
+      <Description />
+      <RootToolName />
+      <ToolVersion />
+      <ToolInDb value="False" />
+      <CategoryName />
+      <SearchTags />
+      <Author />
+      <Company />
+      <Copyright />
+      <DescriptionLink actual="" displayed="" />
+      <Example>
+        <Description />
+        <File />
+      </Example>
+    </MetaInfo>
+    <Events>
+      <Enabled value="False" />
+    </Events>
+    <RuntimeProperties>
+      <Actions>
+        <NoCondition>
+          <Type>NoCondition</Type>
+          <Description>(Always Run)</Description>
+          <True>
+            <Action>
+              <Type>UpdateValueFormula</Type>
+              <Description />
+              <ToolId value="5" />
+              <Expression>[Destination]=[#1]</Expression>
+              <Destination>7/Disabled/@value</Destination>
+              <Mode>Expression</Mode>
+            </Action>
+          </True>
+        </NoCondition>
+      </Actions>
+      <Questions>
+        <Question>
+          <Type>Tab</Type>
+          <Description>Questions</Description>
+          <Name>Tab (1)</Name>
+          <ToolId value="1" />
+          <Questions>
+            <Question>
+              <Type>MacroInput</Type>
+              <Description />
+              <Name>Macro Input (2)</Name>
+              <ToolId value="2" />
+            </Question>
+            <Question>
+              <Type>MacroOutput</Type>
+              <Description />
+              <Name>Macro Output (3)</Name>
+              <ToolId value="3" />
+            </Question>
+            <Question>
+              <Type>ControlParam</Type>
+              <Description>runpython</Description>
+              <Name>Control Parameter (4)</Name>
+              <ToolId value="4" />
+            </Question>
+            <Question>
+              <Type>MacroInput</Type>
+              <Description />
+              <Name>Macro Input (8)</Name>
+              <ToolId value="8" />
+            </Question>
+          </Questions>
+        </Question>
+      </Questions>
+      <ModuleType>Macro</ModuleType>
+      <MacroCustomHelp value="False" />
+      <MacroDynamicOutputFields value="False" />
+      <MacroImageStd value="39" />
+      <MacroInputs />
+      <MacroOutputs />
+      <BatchMacro>
+        <OutputMode>AllSame</OutputMode>
+        <ControlParams>
+          <ControlParam>
+            <Name>Control Parameter (4)</Name>
+            <Description>runpython</Description>
+          </ControlParam>
+        </ControlParams>
+      </BatchMacro>
+      <Wiz_CustomHelp value="False" />
+      <Wiz_CustomGraphic value="False" />
+      <Wiz_ShowOutput value="True" />
+      <Wiz_OpenOutputTools>
+        <Tool ToolId="2" Selected="True" />
+        <Tool ToolId="3" Selected="True" />
+        <Tool ToolId="8" Selected="True" />
+      </Wiz_OpenOutputTools>
+      <Wiz_OutputMessage />
+      <Wiz_NoOutputFilesMessage />
+      <Wiz_ChainRunWizard />
+    </RuntimeProperties>
+  </Properties>
+</AlteryxDocument>

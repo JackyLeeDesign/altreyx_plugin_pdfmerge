@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AlteryxJavaScriptPlugin>
+  <Properties>
+    <MetaInfo>
+      <Name>PDF 合併</Name>
+      <Description>將多個 PDF 檔案合併為單一 PDF 檔。(註:請關閉所有正在執行之工具 workflow，再執行安裝)</Description>
+      <ToolVersion>0.2.7</ToolVersion>
+      <CategoryName>PwC Data Tools</CategoryName>
+      <Author>Assurance Innovation and Transformation</Author>
+      <Icon>PDFMerge/icon.png</Icon>
+    </MetaInfo>
+  </Properties>
+</AlteryxJavaScriptPlugin>
