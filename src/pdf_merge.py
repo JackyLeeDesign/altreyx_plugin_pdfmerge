@@ -1,7 +1,10 @@
 from ast import Delete
 from ayx import Package
-Package.installPackages(package=['pandas','PyPDF2'], install_type="install --user")
-
+try:
+    Package.installPackages(package=['pandas','PyPDF2'], install_type="install --user")
+except:
+    pass
+# ----------------
 from ayx import Alteryx
 import pandas as pd
 from PyPDF2 import PdfMerger,PdfReader
@@ -10,7 +13,9 @@ merger = PdfMerger(strict=False)
 
 # 建立pandas表格資料,最後輸出該表
 resultTemplate = {
-    "Status":[""]
+    "Status":[""],
+    "Message":"",
+    "Output Path":""
 }
 resultData = pd.DataFrame(resultTemplate)
 
@@ -51,12 +56,13 @@ try:
     # Write to an output PDF document
     merger.write(open(output_path, 'wb'))
     resultData.at[0, "Status"] = "Success"
-    resultData.at[0, "Message"] = ""
+    resultData.at[0, "Message"] = "-"
     resultData.at[0, "Output Path"] = output_path
 except Exception as e:
     resultData.at[0, "Status"] = "Failure"
     resultData.at[0, "Message"] = "Alteryx 解析 PDF 過程發生錯誤，請與 AI&T 同仁聯繫("+str(e)+")"
-    resultData.at[0, "Output Path"] = ""
+    resultData.at[0, "Output Path"] = "-"
     if(output_path and os.path.exists(output_path)):
         os.remove(output_path)
 Alteryx.write(resultData,1)
+# Copyright © 2001-2022 Python Software Foundation; All Rights Reserved.

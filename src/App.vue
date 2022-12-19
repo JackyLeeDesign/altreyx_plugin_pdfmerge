@@ -13,7 +13,7 @@
       <div class="col">
         <!-- 第一步 -->
         <div class="card" style="margin-top:10px;">
-          <div class="card-header d-flex justify-content-between align-items-center"><b>Step1：請選擇欲存放結果檔案之資料夾</b></div>
+          <div class="card-header d-flex justify-content-between align-items-center"><b>Step1 : 請選擇欲存放結果檔案之資料夾</b></div>
           <div class="card-header d-flex justify-content-between align-items-center">(檔名自動儲存為 merge_result.pdf)</div>
           <div class="card-body" style="overflow-x:auto;">
             <ayx data-ui-props="{type:'FileBrowse', widgetId:'outputPath',browseType:'Folder'}"></ayx>
@@ -22,7 +22,7 @@
 
         <!-- 第二步 -->
         <div class="card" style="margin-top:10px;">
-          <div class="card-header d-flex justify-content-between align-items-center"><b>Step2：請依照合併順序，依序選擇欲合併之 PDF 檔案</b>
+          <div class="card-header d-flex justify-content-between align-items-center"><b>Step2 : 請依照合併順序，依序選擇欲合併之 PDF 檔案</b>
           </div>
           <div class="card-header d-flex justify-content-between align-items-center">(一次最多合併 8 個檔案，若超過則重複執行該元件即可)</div>
           <div class="card-body" style="overflow-x:auto;">
@@ -70,8 +70,7 @@
   </div>
 
   <footer class="footer mt-auto">
-    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.4</p>
-    <p class="text-muted" style="margin: 0px;text-align: center; font-size:10px;">Copyright © 2001-2022 Python Software Foundation; All Rights Reserved.</p>
+    <p class="text-muted" style="margin: 0px;text-align: center;">版本：0.2.7</p>
   </footer>
 
 </template>
