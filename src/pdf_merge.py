@@ -1,7 +1,7 @@
 from ast import Delete
 from ayx import Package
 try:
-    Package.installPackages(package=['pandas','PyPDF2'], install_type="install --user")
+    Package.installPackages(package=['pandas','PyPDF2==2.11.0'], install_type="install --user")
 except:
     pass
 # ----------------
@@ -66,3 +66,4 @@ except Exception as e:
         os.remove(output_path)
 Alteryx.write(resultData,1)
 # Copyright © 2001-2022 Python Software Foundation; All Rights Reserved.
+
